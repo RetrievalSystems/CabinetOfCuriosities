@@ -3708,8 +3708,16 @@ function updateBoardImage() {
   const bg = document.getElementById('board-bg');
   if(!bg) return;
   const p = CP();
-  // If player is not on a ship, keep the default world map board
-  if(!p.onShip) return;
+  // If player is not on a ship, show the default world map
+  if(!p.onShip) {
+    const def = 'images/img-board-bg.png';
+    if(!bg.src.endsWith('img-board-bg.png')) {
+      bg.src = def;
+      const mbg = document.getElementById('map-board-bg');
+      if(mbg) mbg.src = def;
+    }
+    return;
+  }
   let img = IMG_BOARD_AMS;
   const ship = G.ships[p.shipIndex];
   if(ship) {
