@@ -3703,10 +3703,12 @@ function updateBoardImage() {
 }
 
 function renderTrackers() {
-  // Sync map-board-bg on first render
+  // Always keep map-board-bg in sync with board-bg
   const mbg = document.getElementById('map-board-bg');
   const bg = document.getElementById('board-bg');
-  if(mbg && bg && !mbg.src && bg.src) mbg.src = bg.src;
+  if(mbg && bg && bg.src) {
+    if(!mbg.src.endsWith(bg.src.split('/').pop())) mbg.src = bg.src;
+  }
   // Pirateometer — init images once, rotate needle per sighting
   const pw = document.getElementById('pirate-wheel-img');
   if(pw && !pw.getAttribute('data-loaded')) { pw.src = IMG_PIRATEOMETER; pw.setAttribute('data-loaded','1'); }
@@ -3882,6 +3884,9 @@ window.addEventListener('resize', scaleGame);
 window.addEventListener('load', ()=>{
   initDecks();
   scaleGame();
+  // Initialise zoomed map layer with default board
+  const mbg = document.getElementById('map-board-bg');
+  if(mbg) mbg.src = 'images/img-board-bg.png';
   const boardImg = document.getElementById('board-bg');
   const doInit = () => { renderAll(); log('The Grand Tour begins! Player 1 — draw your first card.'); };
   if(boardImg.complete) { doInit(); }
