@@ -3684,17 +3684,16 @@ function updateBoardImage() {
   const bg = document.getElementById('board-bg');
   if(!bg) return;
   const p = CP();
+  // If player is not on a ship, keep the default world map board
+  if(!p.onShip) return;
   let img = IMG_BOARD_AMS;
-  if(p.onShip) {
-    const ship = G.ships[p.shipIndex];
-    if(ship) {
-      if(ship.shortRoute === 'lisbon') img = IMG_BOARD_LISBON;
-      else if(ship.shortRoute === 'recife') img = IMG_BOARD_RECIFE;
-      else if(ship.shortRoute === 'voc') img = IMG_BOARD_VOC;
-      else if(ship.shortRoute === 'amsterdam') img = IMG_BOARD_AMSTERDAM;
-      else if(ship.shortRoute === 'amsterdam') img = IMG_BOARD_AMSTERDAM;
-      else if(ship.shortRoute==='bei'||!ship.shortRoute) img = IMG_BOARD_BEI;
-    }
+  const ship = G.ships[p.shipIndex];
+  if(ship) {
+    if(ship.shortRoute === 'lisbon') img = IMG_BOARD_LISBON;
+    else if(ship.shortRoute === 'recife') img = IMG_BOARD_RECIFE;
+    else if(ship.shortRoute === 'voc') img = IMG_BOARD_VOC;
+    else if(ship.shortRoute === 'amsterdam') img = IMG_BOARD_AMSTERDAM;
+    else if(ship.shortRoute==='bei'||!ship.shortRoute) img = IMG_BOARD_BEI;
   }
   if(!bg.src.endsWith(img.replace(/^.*images\//,'images/'))) {
     bg.src = img;
