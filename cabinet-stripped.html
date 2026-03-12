@@ -1994,14 +1994,18 @@ function panToPlayer(pi, instant) {
   if(!mapZoom) return;
   const pos = getPlayerMapPos(pi);
   const zoom = 2.0;
-  const MCX = 666.5, MCY = 400.0; // target screen coords within map-inner viewport
-  // With map-zoom offset (-155,-128) and origin:0 0:
-  // x_in_viewport = -CL + (pos.x + tx) * zoom = MCX  => tx = (MCX + CL)/zoom - pos.x
+  // map-inner is 1023x544, offset at left:155 top:128
+  // We want pos.x/pos.y to appear at the centre of map-inner
+  const MCX = 1023 / 2;  // 511.5 — centre of map-inner horizontally
+  const MCY = 544 / 2;   // 272   — centre of map-inner vertically
+  // map-zoom is offset -155,-128 inside map-inner
+  // transform applies to map-zoom: scale then translate
+  // target: zoom*(pos.x + tx) - 155 = MCX
   let tx = (MCX + 155) / zoom - pos.x;
-  let ty = (MCY + 128)  / zoom - pos.y;
-  // Clamp: no empty edges
-  tx = Math.max(155/zoom, Math.min((1023+155)/zoom - 1334, tx));
-  ty = Math.max(128/zoom,  Math.min((544+128)/zoom  - 750,  ty));
+  let ty = (MCY + 128) / zoom - pos.y;
+  // Clamp so we never show empty space outside the board
+  tx = Math.max(155/zoom - 1334 + 1023/zoom, Math.min(155/zoom, tx));
+  ty = Math.max(128/zoom - 750  + 544/zoom,  Math.min(128/zoom, ty));
   const tfm = 'scale('+zoom+') translate('+tx+'px,'+ty+'px)';
   if(instant) {
     mapZoom.style.transition = 'none';
@@ -3888,7 +3892,7 @@ window.addEventListener('load', ()=>{
   const mbg = document.getElementById('map-board-bg');
   if(mbg) mbg.src = 'images/img-board-bg.png';
   const boardImg = document.getElementById('board-bg');
-  const doInit = () => { renderAll(); log('The Grand Tour begins! Player 1 — draw your first card.'); };
+  const doInit = () => { renderAll(); panToPlayer(G.turn, true); log('The Grand Tour begins! Player 1 — draw your first card.'); };
   if(boardImg.complete) { doInit(); }
   else { boardImg.addEventListener('load', doInit); }
 });
