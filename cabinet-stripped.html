@@ -3696,7 +3696,7 @@ function updateBoardImage() {
       else if(ship.shortRoute==='bei'||!ship.shortRoute) img = IMG_BOARD_BEI;
     }
   }
-  if(bg.src !== img) {
+  if(!bg.src.endsWith(img.replace(/^.*images\//,'images/'))) {
     bg.src = img;
     const mbg = document.getElementById('map-board-bg');
     if(mbg) mbg.src = img;
@@ -3883,8 +3883,10 @@ window.addEventListener('resize', scaleGame);
 window.addEventListener('load', ()=>{
   initDecks();
   scaleGame();
-  renderAll();
-  log('The Grand Tour begins! Player 1 — draw your first card.');
+  const boardImg = document.getElementById('board-bg');
+  const doInit = () => { renderAll(); log('The Grand Tour begins! Player 1 — draw your first card.'); };
+  if(boardImg.complete) { doInit(); }
+  else { boardImg.addEventListener('load', doInit); }
 });
 </script>
 
