@@ -298,8 +298,8 @@ body{background:#0d0705;display:flex;justify-content:center;align-items:center;m
 <div id="game">
 
 <img id="board-bg" style="position:absolute;top:0;left:0;width:1334px;height:750px;display:block;z-index:1;pointer-events:none;object-fit:fill;" src="images/img-board-bg.png">
-<div id="map-inner" style="position:absolute;top:128px;left:155px;width:1023px;height:544px;overflow:hidden;z-index:2;pointer-events:none;">
-<div id="map-zoom" style="position:absolute;top:-128px;left:-155px;width:1334px;height:750px;transform-origin:0 0;will-change:transform;pointer-events:all;">
+<div id="map-inner" style="position:absolute;top:0;left:0;width:1334px;height:750px;overflow:hidden;z-index:2;pointer-events:none;">
+<div id="map-zoom" style="position:absolute;top:0;left:0;width:1334px;height:750px;transform-origin:0 0;will-change:transform;pointer-events:all;">
 <img id="map-board-bg" style="position:absolute;top:0;left:0;width:1334px;height:750px;display:block;z-index:1;pointer-events:none;" src="" alt="">
 
 <!-- Face-up opportunity cards board display -->
@@ -1989,15 +1989,18 @@ function getPlayerMapPos(pi) {
 
 // ── MAP ZOOM LEVEL ────────────────────────────────────────────
 // Match the natural map scale: map-inner (1023x544) showing full 1334x750 board
-const MAP_ZOOM_LEVEL = 1334 / 1023; // ≈ 1.304
+const MAP_ZOOM_LEVEL = 1.5;
 
 function _buildTransform(pos, zoom) {
-  const MCX = 1023 / 2;
-  const MCY = 544 / 2;
-  let tx = (MCX + 155) / zoom - pos.x;
-  let ty = (MCY + 128) / zoom - pos.y;
-  tx = Math.max(155/zoom - 1334 + 1023/zoom, Math.min(155/zoom, tx));
-  ty = Math.max(128/zoom - 750  + 544/zoom,  Math.min(128/zoom, ty));
+  // Centre of the full 1334x750 board
+  const MCX = 1334 / 2;
+  const MCY = 750 / 2;
+  // We want pos to appear at the centre: zoom*(pos.x + tx) = MCX
+  let tx = MCX / zoom - pos.x;
+  let ty = MCY / zoom - pos.y;
+  // Clamp — no empty edges
+  tx = Math.max(1334/zoom - 1334, Math.min(0, tx));
+  ty = Math.max(750/zoom  - 750,  Math.min(0, ty));
   return 'scale('+zoom+') translate('+tx+'px,'+ty+'px)';
 }
 
