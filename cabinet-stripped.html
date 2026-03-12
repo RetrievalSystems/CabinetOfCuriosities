@@ -1987,38 +1987,37 @@ function getPlayerMapPos(pi) {
   return {x: MAP_W/2, y: MAP_H/2};
 }
 
+// ── MAP ZOOM LEVEL ────────────────────────────────────────────
+// Match the natural map scale: map-inner (1023x544) showing full 1334x750 board
+const MAP_ZOOM_LEVEL = 1334 / 1023; // ≈ 1.304
+
+function _buildTransform(pos, zoom) {
+  const MCX = 1023 / 2;
+  const MCY = 544 / 2;
+  let tx = (MCX + 155) / zoom - pos.x;
+  let ty = (MCY + 128) / zoom - pos.y;
+  tx = Math.max(155/zoom - 1334 + 1023/zoom, Math.min(155/zoom, tx));
+  ty = Math.max(128/zoom - 750  + 544/zoom,  Math.min(128/zoom, ty));
+  return 'scale('+zoom+') translate('+tx+'px,'+ty+'px)';
+}
+
 function panToPlayer(pi, instant) {
   const zob = document.getElementById('zoom-out-btn');
   if(zob) zob.style.opacity = '1';
   const mapZoom = document.getElementById('map-zoom');
   if(!mapZoom) return;
   const pos = getPlayerMapPos(pi);
-  const zoom = 2.0;
-  // map-inner is 1023x544, offset at left:155 top:128
-  // We want pos.x/pos.y to appear at the centre of map-inner
-  const MCX = 1023 / 2;  // 511.5 — centre of map-inner horizontally
-  const MCY = 544 / 2;   // 272   — centre of map-inner vertically
-  // map-zoom is offset -155,-128 inside map-inner
-  // transform applies to map-zoom: scale then translate
-  // target: zoom*(pos.x + tx) - 155 = MCX
-  let tx = (MCX + 155) / zoom - pos.x;
-  let ty = (MCY + 128) / zoom - pos.y;
-  // Clamp so we never show empty space outside the board
-  tx = Math.max(155/zoom - 1334 + 1023/zoom, Math.min(155/zoom, tx));
-  ty = Math.max(128/zoom - 750  + 544/zoom,  Math.min(128/zoom, ty));
-  const tfm = 'scale('+zoom+') translate('+tx+'px,'+ty+'px)';
+  const tfm = _buildTransform(pos, MAP_ZOOM_LEVEL);
   if(instant) {
     mapZoom.style.transition = 'none';
     mapZoom.style.transform = tfm;
   } else {
-    mapZoom.style.transition = 'none';
-    mapZoom.style.transform = 'scale(1) translate(0px,0px)';
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      mapZoom.style.transition = 'transform 1.6s cubic-bezier(0.4,0,0.2,1)';
-      mapZoom.style.transform = tfm;
-    }));
+    // Smooth pan — no zoom out, just glide directly to new position
+    mapZoom.style.transition = 'transform 1.4s cubic-bezier(0.4,0,0.2,1)';
+    mapZoom.style.transform = tfm;
   }
 }
+
 function zoomOutMap() {
   const m = document.getElementById('map-zoom');
   if(!m) return;
@@ -2027,6 +2026,24 @@ function zoomOutMap() {
   const zob = document.getElementById('zoom-out-btn');
   if(zob) zob.style.opacity = '0.3';
 }
+
+// Spacebar hold — zoom out while held, pan back on release
+(function() {
+  let spaceDown = false;
+  document.addEventListener('keydown', e => {
+    if(e.code === 'Space' && !spaceDown) {
+      spaceDown = true;
+      e.preventDefault();
+      zoomOutMap();
+    }
+  });
+  document.addEventListener('keyup', e => {
+    if(e.code === 'Space') {
+      spaceDown = false;
+      panToPlayer(G.turn);
+    }
+  });
+})();
 
 function endTurn() {
   const p=CP();
@@ -3892,7 +3909,12 @@ window.addEventListener('load', ()=>{
   const mbg = document.getElementById('map-board-bg');
   if(mbg) mbg.src = 'images/img-board-bg.png';
   const boardImg = document.getElementById('board-bg');
-  const doInit = () => { renderAll(); panToPlayer(G.turn, true); log('The Grand Tour begins! Player 1 — draw your first card.'); };
+  const doInit = () => {
+    renderAll();
+    log('The Grand Tour begins! Player 1 — draw your first card.');
+    // Show full map briefly, then zoom in to starting position
+    setTimeout(() => panToPlayer(G.turn), 3000);
+  };
   if(boardImg.complete) { doInit(); }
   else { boardImg.addEventListener('load', doInit); }
 });
