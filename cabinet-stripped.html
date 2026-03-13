@@ -31,7 +31,7 @@ body{background:#0d0705;display:flex;justify-content:center;align-items:center;m
 .port-btn.inactive{opacity:0.2;cursor:default;pointer-events:none;}
 @keyframes portpulse{0%,100%{box-shadow:0 0 0 0 rgba(212,168,85,0.5);}50%{box-shadow:0 0 0 7px rgba(212,168,85,0);}}
 
-.player-panel{position:absolute;z-index:101;width:192px;padding:5px;background:rgba(8,4,1,0.7);border:1px solid rgba(212,168,85,0.2);border-radius:4px;}
+.player-panel{position:absolute;z-index:201;width:192px;padding:5px;background:rgba(8,4,1,0.7);border:1px solid rgba(212,168,85,0.2);border-radius:4px;}
 #p1-panel{left:3px;top:260px;}
 #p2-panel{right:3px;top:260px;}
 
@@ -360,8 +360,8 @@ body{background:#0d0705;display:flex;justify-content:center;align-items:center;m
 
 
 
-<div id="opp-board-left"    style="position:absolute;z-index:101;top:220px;left:8px;width:90px;display:flex;flex-direction:column;gap:6px;align-items:flex-start;"></div>
-<div id="opp-board-right" style="position:absolute;z-index:101;top:220px;right:8px;width:90px;display:flex;flex-direction:column;gap:6px;align-items:flex-end;"></div>
+<div id="opp-board-left"    style="position:absolute;z-index:201;top:220px;left:8px;width:90px;display:flex;flex-direction:column;gap:6px;align-items:flex-start;"></div>
+<div id="opp-board-right" style="position:absolute;z-index:201;top:220px;right:8px;width:90px;display:flex;flex-direction:column;gap:6px;align-items:flex-end;"></div>
 
 
 </div><!-- /map-zoom -->
@@ -380,7 +380,7 @@ body{background:#0d0705;display:flex;justify-content:center;align-items:center;m
 
 <!-- Black Flag Sightings HUD — sits below board -->
 <!-- P1 shelf — 6 slots on LEFT side of left portrait (outer brown strip) -->
-<div id="p1-shelf" style="position:absolute;top:37px;left:63px;width:74px;z-index:102;display:flex;flex-direction:column;gap:3px;padding:3px;">
+<div id="p1-shelf" style="position:absolute;top:37px;left:63px;width:74px;z-index:201;display:flex;flex-direction:column;gap:3px;padding:3px;">
   <div class="shelf-slot" id="p1-sh0" title="Coins"></div>
   <div class="shelf-slot" id="p1-sh1" title="Silver Ingots"></div>
   <div class="shelf-slot" id="p1-sh2" onclick="openItemDetail(0,0)" title="Item 1"></div>
@@ -391,7 +391,7 @@ body{background:#0d0705;display:flex;justify-content:center;align-items:center;m
 </div>
 
 <!-- P2 shelf — 6 slots on RIGHT side of right portrait (outer brown strip) -->
-<div id="p2-shelf" style="position:absolute;top:37px;right:43px;width:74px;z-index:102;display:flex;flex-direction:column;gap:3px;padding:3px;">
+<div id="p2-shelf" style="position:absolute;top:37px;right:43px;width:74px;z-index:201;display:flex;flex-direction:column;gap:3px;padding:3px;">
   <div class="shelf-slot" id="p2-sh0" title="Coins"></div>
   <div class="shelf-slot" id="p2-sh1" title="Silver Ingots"></div>
   <div class="shelf-slot" id="p2-sh2" onclick="openItemDetail(1,0)" title="Item 1"></div>
